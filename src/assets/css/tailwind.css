@@ -1,0 +1,8 @@
+@tailwind base;
+@tailwind components;
+
+.agenda-items {
+  top: 100px;
+}
+
+@tailwind utilities;

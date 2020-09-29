@@ -5,7 +5,7 @@
 </template>
 <script>
 import mapboxgl from 'mapbox-gl';
-
+/* eslint-disable */
 export default {
   components: {
   },
@@ -20,9 +20,15 @@ export default {
     const map = new mapboxgl.Map({
       container: 'map',
       style: 'mapbox://styles/mapbox/streets-v11', // stylesheet location
-      center: [-74.5, 40], // starting position [lng, lat]
+      center: [5.20, 7.25], // starting position [lng, lat]
       zoom: 9, // starting zoom
     });
+    const el = document.createElement('div');
+    el.className = 'marker';
+
+    new mapboxgl.Marker(el)
+      .setLngLat([5.20, 7.25])
+      .addTo(map);
     this.map = map;
   },
 };

@@ -13,4 +13,12 @@ export default {
   body {
     font-family: 'Baloo Tammudu 2', cursive;
   }
+  .marker {
+    background-size: cover;
+    width: 50px;
+    height: 50px;
+    background: #000000;
+    border-radius: 50%;
+    cursor: pointer;
+  }
 </style>

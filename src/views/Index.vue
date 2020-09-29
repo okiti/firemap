@@ -36,6 +36,7 @@
     a {
       @apply px-1;
       @apply pt-2;
+      @apply text-gray-800;
       i::after {
         margin: 0 !important;
         padding: 0 !important;

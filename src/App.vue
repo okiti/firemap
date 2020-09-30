@@ -13,12 +13,31 @@ export default {
 body {
   font-family: 'Baloo Tammudu 2', cursive;
 }
+.avatar {
+  width: 80px;
+  height: 80px;
+}
+.mapboxgl-popup-content {
+  border-radius: 7px;
+}
+.mapboxgl-popup {
+  width: 280px;
+  border-radius: 7px;
+}
+.tel-holder {
+  width: 50px; height: 50px;
+  margin-top: 10px;
+  @apply bg-gray-300;
+  i {
+    @apply text-gray-600;
+  }
+}
 .marker {
   background-size: cover;
-  width: 10px;
-  height: 10px;
+  width: 15px;
+  height: 15px;
   border-radius: 50%;
-  background: rgb(51, 165, 50);
+  background: rgb(15, 157, 88);
   cursor: pointer;
   box-shadow: 0 0 0 #d30b2a;
   animation: pulse 2s infinite;

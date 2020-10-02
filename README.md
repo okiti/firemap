@@ -1,4 +1,4 @@
-# agendr
+# Firemap
 
 ## Project setup
 ```

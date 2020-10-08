@@ -32,6 +32,15 @@ body {
     @apply text-gray-600;
   }
 }
+.status {
+  font-size: 40px;
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  display: flex;
+}
+.st-true {
+  @apply text-green-500;
+}
 .marker {
   background-size: cover;
   width: 15px;

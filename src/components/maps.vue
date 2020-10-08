@@ -17,29 +17,23 @@ export default {
         {
           icon: 'pulsing-dot',
           id: 43490203,
-          location: {
-            longitude: 5.2,
-            latitude: 7.25,
-          },
-          user: {
-            name: 'Joe Biden',
-            phone: '+190067839921',
-            address: 'RM 201, Camp nou',
-          },
+          networkStatus: true,
+          fireStatus: false,
+          ownerName: 'Joe Biden',
+          ownerNumber: '+23458882934343',
+          longitude: 5.2,
+          latitude: 7.25,
         },
         {
+          icon: 'pulsing-dot',
           id: 43490203,
-          location: {
-            longitude: 4.7,
-            latitude: 6.2,
-          },
-          user: {
-            name: 'Demilade Ajayi',
-            phone: '+190067839921',
-            address: 'RM 201, Camp nou',
-          },
+          networkStatus: true,
+          fireStatus: false,
+          ownerName: 'Joe Biden',
+          ownerNumber: '+23458882934343',
+          longitude: 4.7,
+          latitude: 6.2,
         },
-
       ],
       sensorGeoJson: {
         type: 'geojson',
@@ -113,16 +107,23 @@ export default {
         const sensorData = {
           geometry: {
             type: 'Point',
-            coordinates: [data[key].location.longitude, data[key].location.latitude],
+            coordinates: [data[key].longitude, data[key].latitude],
           },
           type: 'Feature',
           properties: {
             description: `<div class="flex flex-col justify-center items-center pt-5">
               <img class="rounded-full object-cover avatar" src="https://cdn.dribbble.com/users/2407235/screenshots/6303151/abstract_design_2x.png" alt="username" />
-              <p class="font-bold pt-3 text-xl">${data[key].user.name}</p>
-              <p class="text-sm pt-1 text-center px-5">${data[key].user.address}</p>
+              <div class="flex items-center pt-3 flex-no-wrap">
+                <p class=""> Active </p>
+                <div class="status st-true">&bull;</div>
+              </div>
+              <div class="flex items-center pt-3 flex-no-wrap">
+                <p class="font-semibold text-xs"> Online since: 3 days </p>
+              </div>              
+              <p class="font-bold pt-2 text-xl">${data[key].ownerName}</p>
+              <p class="text-sm pt-1 text-center px-5">Room 306</p>
               <div>
-                <a class="rounded-full flex justify-center items-center tel-holder" href="tel:${data[key].user.phone}"><i class="uil uil-calling text-2xl"></i></a>
+                <a class="rounded-full flex justify-center items-center tel-holder" href="tel:${data[key].ownerNumber}"><i class="uil uil-calling text-2xl"></i></a>
               </div>
               </div>`,
             icon: 'pulsing-dot',

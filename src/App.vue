@@ -38,8 +38,11 @@ body {
   border-radius: 50%;
   display: flex;
 }
-.st-true {
+.nofire {
   @apply text-green-500;
+}
+.fire {
+  @apply text-red-500;
 }
 .marker {
   background-size: cover;

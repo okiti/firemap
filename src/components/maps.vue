@@ -5,7 +5,10 @@
 </template>
 <script>
 import mapboxgl from 'mapbox-gl';
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
 import pulse from '../lib/pulse';
+import redPulse from '../lib/redPulse';
 
 /* eslint-disable */
 export default {
@@ -19,17 +22,30 @@ export default {
           id: 43490203,
           networkStatus: true,
           fireStatus: false,
+          reconnectionTime: '2020-10-07T12:12:45+01:00',
           ownerName: 'Joe Biden',
           ownerNumber: '+23458882934343',
           longitude: 5.2,
           latitude: 7.25,
         },
         {
+          icon: 'redpulsing-dot',
+          id: 43490203,
+          networkStatus: true,
+          fireStatus: true,
+          reconnectionTime: '2020-10-07T12:12:45+01:00',
+          ownerName: 'Gene Plus',
+          ownerNumber: '+23458882934343',
+          longitude: 3.3,
+          latitude: 6.5,
+        },
+        {
           icon: 'pulsing-dot',
           id: 43490203,
           networkStatus: true,
           fireStatus: false,
-          ownerName: 'Joe Biden',
+          ownerName: 'Micheal Akpan',
+          reconnectionTime: '2020-10-07T12:12:45+01:00',
           ownerNumber: '+23458882934343',
           longitude: 4.7,
           latitude: 6.2,
@@ -63,9 +79,10 @@ export default {
     });
 
     const pulsingDot = pulse(map);
-
+    const redPulsingDot = redPulse(map);
     map.on('load', () => {
       map.addImage('pulsing-dot', pulsingDot, { pixelRatio: 2 });
+      map.addImage('redpulsing-dot', redPulsingDot, { pixelRatio: 2 });
       map.addSource('places', vm.sensorGeoJson);
       // Add a layer showing the places.
       map.addLayer({
@@ -104,6 +121,9 @@ export default {
     async generateGeoJson(data) {
       const vm = this;
       for (const key in data) {
+        dayjs.extend(relativeTime)
+        const dt = dayjs(data[key].reconnectionTime).fromNow();
+        const fireStatus = data[key].fireStatus ? 'fire' : 'nofire';
         const sensorData = {
           geometry: {
             type: 'Point',
@@ -115,10 +135,10 @@ export default {
               <img class="rounded-full object-cover avatar" src="https://cdn.dribbble.com/users/2407235/screenshots/6303151/abstract_design_2x.png" alt="username" />
               <div class="flex items-center pt-3 flex-no-wrap">
                 <p class=""> Active </p>
-                <div class="status st-true">&bull;</div>
+                <div class="status ${fireStatus}">&bull;</div>
               </div>
               <div class="flex items-center pt-3 flex-no-wrap">
-                <p class="font-semibold text-xs"> Online since: 3 days </p>
+                <p class="font-semibold text-xs"> Online since: ${dt} </p>
               </div>              
               <p class="font-bold pt-2 text-xl">${data[key].ownerName}</p>
               <p class="text-sm pt-1 text-center px-5">Room 306</p>
@@ -126,7 +146,7 @@ export default {
                 <a class="rounded-full flex justify-center items-center tel-holder" href="tel:${data[key].ownerNumber}"><i class="uil uil-calling text-2xl"></i></a>
               </div>
               </div>`,
-            icon: 'pulsing-dot',
+            icon: `${data[key].icon}`,
           },
         };
         vm.sensorGeoJson.data.features.push(sensorData);

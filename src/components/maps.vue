@@ -10,6 +10,7 @@ import axios from 'axios';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import pulse from '../lib/pulse';
 import redPulse from '../lib/redPulse';
+import yellowPulse from '../lib/yellowPulse';
 
 /* eslint-disable */
 export default {
@@ -51,9 +52,11 @@ export default {
 
     const pulsingDot = pulse(map);
     const redPulsingDot = redPulse(map);
+    const yellowPulsingDot = yellowPulse(map);
     map.on('load', () => {
       map.addImage('pulsing-dot', pulsingDot, { pixelRatio: 2 });
       map.addImage('redpulsing-dot', redPulsingDot, { pixelRatio: 2 });
+      map.addImage('yellowpulsing-dot', yellowPulsingDot, { pixelRatio: 2 });
       map.addSource('places', vm.sensorGeoJson);
       // Add a layer showing the places.
       map.addLayer({

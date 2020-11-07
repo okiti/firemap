@@ -11,8 +11,8 @@
       </div> -->
       <div class="mt-6">
         <nav class="flex w-full items-center flex-col">
-          <a class="flex flex-no-wrap items-center" href="">
-            <i class="uil uil-desktop-cloud-alt text-2xl"></i>
+          <a @click.prevent="toggleAboutModal" class="flex flex-no-wrap items-center" href="">
+            <i class="uil uil-info-circle text-2xl"></i>
           </a>
           <a class="flex flex-no-wrap items-center" href="">
             <i class="uil uil-bell text-2xl"></i>
@@ -26,12 +26,13 @@
     <div>
       <maps />
     </div>
+    <about :open="modal.about" :closeAction="toggleAboutModal" />
   </div>
 </template>
 <style lang="scss" scoped>
 .side-bar {
   width: 50px;
-  background: #FFF;
+  background: #fff;
   nav {
     a {
       @apply px-1;
@@ -57,10 +58,24 @@
 </style>
 <script>
 import maps from '@/components/maps.vue';
+import about from '@/components/modals/profile/about.vue';
 
 export default {
   components: {
     maps,
+    about,
+  },
+  data() {
+    return {
+      modal: {
+        about: false,
+      },
+    };
+  },
+  methods: {
+    toggleAboutModal() {
+      this.modal.about = !this.modal.about;
+    },
   },
 };
 </script>

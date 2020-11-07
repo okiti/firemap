@@ -6,6 +6,7 @@
 <script>
 import mapboxgl from 'mapbox-gl';
 import dayjs from 'dayjs';
+import axios from 'axios';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import pulse from '../lib/pulse';
 import redPulse from '../lib/redPulse';
@@ -16,41 +17,6 @@ export default {
   data() {
     return {
       map: false,
-      sensors: [
-        {
-          icon: 'pulsing-dot',
-          id: 43490203,
-          networkStatus: true,
-          fireStatus: false,
-          reconnectionTime: '2020-10-07T12:12:45+01:00',
-          ownerName: 'Joe Biden',
-          ownerNumber: '+23458882934343',
-          longitude: 5.2,
-          latitude: 7.25,
-        },
-        {
-          icon: 'redpulsing-dot',
-          id: 43490203,
-          networkStatus: true,
-          fireStatus: true,
-          reconnectionTime: '2020-10-07T12:12:45+01:00',
-          ownerName: 'Gene Plus',
-          ownerNumber: '+23458882934343',
-          longitude: 3.3,
-          latitude: 6.5,
-        },
-        {
-          icon: 'pulsing-dot',
-          id: 43490203,
-          networkStatus: true,
-          fireStatus: false,
-          ownerName: 'Micheal Akpan',
-          reconnectionTime: '2020-10-07T12:12:45+01:00',
-          ownerNumber: '+23458882934343',
-          longitude: 4.7,
-          latitude: 6.2,
-        },
-      ],
       sensorGeoJson: {
         type: 'geojson',
         data: {
@@ -64,7 +30,12 @@ export default {
   },
   async mounted() {
     const vm = this;
-    await this.generateGeoJson(vm.sensors);
+    axios.get('http://fire-device.us-east-2.elasticbeanstalk.com/devices')
+    .then(async (response) => {
+      const devices = response.data.data;
+      console.log(devices);
+      await this.generateGeoJson(devices);
+    })
 
     mapboxgl.accessToken = this.token;
 
@@ -146,7 +117,7 @@ export default {
                 <a class="rounded-full flex justify-center items-center tel-holder" href="tel:${data[key].ownerNumber}"><i class="uil uil-calling text-2xl"></i></a>
               </div>
               </div>`,
-            icon: `${data[key].icon}`,
+            icon: fireStatus ? 'pulsing-dot' : 'redpulsing-dot',
           },
         };
         vm.sensorGeoJson.data.features.push(sensorData);

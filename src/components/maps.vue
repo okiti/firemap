@@ -113,7 +113,7 @@ export default {
             },
           });
         }
-      }, 3000);
+      }, 600000);
     });
     map.on('mouseenter', 'places0', () => {
       map.getCanvas().style.cursor = 'pointer';

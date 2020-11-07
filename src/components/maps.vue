@@ -113,18 +113,57 @@ export default {
             },
           });
         }
-      }, 600000);
+      }, 3000);
     });
-    map.on('mouseenter', 'places', () => {
+    map.on('mouseenter', 'places0', () => {
       map.getCanvas().style.cursor = 'pointer';
     });
 
-    map.on('mouseleave', 'places', () => {
+    map.on('mouseenter', 'places1', () => {
+      map.getCanvas().style.cursor = 'pointer';
+    });
+
+    map.on('mouseenter', 'places2', () => {
+      map.getCanvas().style.cursor = 'pointer';
+    });
+
+    map.on('mouseleave', 'places0', () => {
+      map.getCanvas().style.cursor = '';
+    });
+    map.on('mouseleave', 'places1', () => {
+      map.getCanvas().style.cursor = '';
+    });
+    map.on('mouseleave', 'places2', () => {
       map.getCanvas().style.cursor = '';
     });
     // When a click event occurs on a feature in the places layer, open a popup at the
     // location of the feature, with description HTML from its properties.
-    map.on('click', 'places', (e) => {
+    map.on('click', 'places0', (e) => {
+      const coordinates = e.features[0].geometry.coordinates.slice();
+      const { description } = e.features[0].properties;
+
+      // Ensure that if the map is zoomed out such that multiple
+      // copies of the feature are visible, the popup appears
+      // over the copy being pointed to.
+      while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+        coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+      }
+      new mapboxgl.Popup().setLngLat(coordinates).setHTML(description).addTo(map);
+    });
+    map.on('click', 'places1', (e) => {
+      const coordinates = e.features[0].geometry.coordinates.slice();
+      const { description } = e.features[0].properties;
+
+      // Ensure that if the map is zoomed out such that multiple
+      // copies of the feature are visible, the popup appears
+      // over the copy being pointed to.
+      while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+        coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+      }
+      new mapboxgl.Popup().setLngLat(coordinates).setHTML(description).addTo(map);
+    });
+
+    map.on('click', 'places2', (e) => {
       const coordinates = e.features[0].geometry.coordinates.slice();
       const { description } = e.features[0].properties;
 

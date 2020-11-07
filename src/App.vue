@@ -38,10 +38,10 @@ body {
   border-radius: 50%;
   display: flex;
 }
-.nofire {
+.true {
   @apply text-green-500;
 }
-.fire {
+.false {
   @apply text-red-500;
 }
 .marker {

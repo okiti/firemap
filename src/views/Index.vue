@@ -14,12 +14,12 @@
           <a @click.prevent="toggleAboutModal" class="flex flex-no-wrap items-center" href="">
             <i class="uil uil-info-circle text-2xl"></i>
           </a>
-          <a class="flex flex-no-wrap items-center" href="">
+          <!-- <a class="flex flex-no-wrap items-center" href="">
             <i class="uil uil-bell text-2xl"></i>
           </a>
           <a class="flex flex-no-wrap items-center" href="">
             <i class="uil uil-cog text-2xl"></i>
-          </a>
+          </a> -->
         </nav>
       </div>
     </div>

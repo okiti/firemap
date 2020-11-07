@@ -134,7 +134,7 @@ export default {
                 <p class="font-semibold text-xs"> Online since: ${dt} </p>
               </div>              
               <p class="font-bold pt-2 text-xl">${data[key].ownerName}</p>
-              <p class="text-sm pt-1 text-center px-5">Room 306</p>
+              <p class="text-sm pt-1 text-center px-5"></p>
               <div>
                 <a class="rounded-full flex justify-center items-center tel-holder" href="tel:${data[key].ownerNumber}"><i class="uil uil-calling text-2xl"></i></a>
               </div>

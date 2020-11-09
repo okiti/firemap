@@ -35,6 +35,7 @@ export default {
     const vm = this;
     axios.get('https://iotsensordevice.herokuapp.com/devices').then(async (response) => {
       vm.devices = response.data.data;
+      console.log(vm.devices);
       await this.generateGeoJson([vm.devices[vm.currentLayer]]);
       if (vm.currentLayer < 2) {
         vm.currentLayer += 1;
@@ -113,7 +114,7 @@ export default {
             },
           });
         }
-      }, 600000);
+      }, 3000);
     });
     map.on('mouseenter', 'places0', () => {
       map.getCanvas().style.cursor = 'pointer';
@@ -208,7 +209,7 @@ export default {
                 }"><i class="uil uil-calling text-2xl"></i></a>
               </div>
               </div>`,
-            icon: data[key].fireStatus ? 'redpulsing-dot' : 'pulsing-dot',
+            icon: !data[key].networkStatus ? 'yellowpulsing-dot' :data[key].fireStatus ? 'redpulsing-dot' : 'pulsing-dot',
           },
         };
         vm.sensorGeoJson.data.features.push(sensorData);

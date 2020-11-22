@@ -18,8 +18,8 @@ export default {
   data() {
     return {
       map: false,
-      currentLayer: 0,
-      devices: null,
+      log: 0.000,
+      lat: 0.000,
       sensorGeoJson: {
         type: 'geojson',
         data: {
@@ -33,24 +33,21 @@ export default {
   },
   async mounted() {
     const vm = this;
-    axios.get('https://iotsensordevice.herokuapp.com/devices').then(async (response) => {
-      vm.devices = response.data.data;
-      console.log(vm.devices);
-      await this.generateGeoJson([vm.devices[vm.currentLayer]]);
-      if (vm.currentLayer < 2) {
-        vm.currentLayer += 1;
-      } else if (vm.currentLayer === 2) {
-        vm.currentLayer = 0;
-      }
-    });
+    axios.get('https://api.thingspeak.com/channels/1235655/feeds.json?api_key=LPDICWMZTR0WH5L7&results=7')
+    .then(async (response) => {
+      const devices = response.data.feeds;
+      console.log(devices);
+      vm.log = devices[0].field2;
+      vm.lat = devices[0].field3;
+      await this.generateGeoJson(devices);
+    })
 
     mapboxgl.accessToken = this.token;
-
     const map = new mapboxgl.Map({
       container: 'map',
       style: 'mapbox://styles/osivwi/ckfgzpsf12odv19p8stu3aif0',
-      center: [5.2, 7.25],
-      zoom: 6.15,
+      center: [this.lat, this.log],
+      zoom: 4.15,
     });
 
     const pulsingDot = pulse(map);
@@ -63,108 +60,25 @@ export default {
       map.addSource('places', vm.sensorGeoJson);
       // Add a layer showing the places.
       map.addLayer({
-        id: `places0`,
+        id: 'places',
         type: 'symbol',
-        source: `places`,
+        source: 'places',
         layout: {
           'icon-image': '{icon}',
           'icon-allow-overlap': true,
         },
       });
-      setInterval(async () => {
-        await this.generateGeoJson([vm.devices[vm.currentLayer]]);
-        if (vm.currentLayer === 0) {
-          map.removeLayer('places0');
-          vm.currentLayer = 1;
-          map.getSource('places').setData(vm.sensorGeoJson.data);
-          map.addLayer({
-            id: `places1`,
-            type: 'symbol',
-            source: `places`,
-            layout: {
-              'icon-image': '{icon}',
-              'icon-allow-overlap': true,
-            },
-          });
-        } else if(vm.currentLayer === 1) {
-          map.removeLayer('places1');
-          vm.currentLayer = 2;
-          map.getSource('places').setData(vm.sensorGeoJson.data);
-          map.addLayer({
-            id: `places2`,
-            type: 'symbol',
-            source: `places`,
-            layout: {
-              'icon-image': '{icon}',
-              'icon-allow-overlap': true,
-            },
-          });
-
-        } else if (vm.currentLayer === 2) {
-          map.removeLayer('places2');
-          vm.currentLayer = 0;
-          map.getSource('places').setData(vm.sensorGeoJson.data);
-          map.addLayer({
-            id: `places0`,
-            type: 'symbol',
-            source: `places`,
-            layout: {
-              'icon-image': '{icon}',
-              'icon-allow-overlap': true,
-            },
-          });
-        }
-      }, 180000);
     });
-    map.on('mouseenter', 'places0', () => {
+    map.on('mouseenter', 'places', () => {
       map.getCanvas().style.cursor = 'pointer';
     });
 
-    map.on('mouseenter', 'places1', () => {
-      map.getCanvas().style.cursor = 'pointer';
-    });
-
-    map.on('mouseenter', 'places2', () => {
-      map.getCanvas().style.cursor = 'pointer';
-    });
-
-    map.on('mouseleave', 'places0', () => {
-      map.getCanvas().style.cursor = '';
-    });
-    map.on('mouseleave', 'places1', () => {
-      map.getCanvas().style.cursor = '';
-    });
-    map.on('mouseleave', 'places2', () => {
+    map.on('mouseleave', 'places', () => {
       map.getCanvas().style.cursor = '';
     });
     // When a click event occurs on a feature in the places layer, open a popup at the
     // location of the feature, with description HTML from its properties.
-    map.on('click', 'places0', (e) => {
-      const coordinates = e.features[0].geometry.coordinates.slice();
-      const { description } = e.features[0].properties;
-
-      // Ensure that if the map is zoomed out such that multiple
-      // copies of the feature are visible, the popup appears
-      // over the copy being pointed to.
-      while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
-        coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
-      }
-      new mapboxgl.Popup().setLngLat(coordinates).setHTML(description).addTo(map);
-    });
-    map.on('click', 'places1', (e) => {
-      const coordinates = e.features[0].geometry.coordinates.slice();
-      const { description } = e.features[0].properties;
-
-      // Ensure that if the map is zoomed out such that multiple
-      // copies of the feature are visible, the popup appears
-      // over the copy being pointed to.
-      while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
-        coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
-      }
-      new mapboxgl.Popup().setLngLat(coordinates).setHTML(description).addTo(map);
-    });
-
-    map.on('click', 'places2', (e) => {
+    map.on('click', 'places', (e) => {
       const coordinates = e.features[0].geometry.coordinates.slice();
       const { description } = e.features[0].properties;
 
@@ -178,38 +92,38 @@ export default {
     });
   },
   methods: {
+    // field2 = longitude
+    // field3 = latitude
     async generateGeoJson(data) {
       const vm = this;
-      vm.sensorGeoJson.data.features = [];
       for (const key in data) {
-        dayjs.extend(relativeTime);
-        const dt = dayjs(data[key].reconnectionTime).fromNow();
-        const fireStatus = data[key].fireStatus ? 'fire' : 'nofire';
+        dayjs.extend(relativeTime)
+        const dt = dayjs(data[key].created_at).fromNow();
+        const networkStatus = data[key].field5 ? 'online' : 'offline';
+        const fireStatus = data[key].field4 ? 'fire' : 'nofire';
         const sensorData = {
           geometry: {
             type: 'Point',
-            coordinates: [data[key].longitude, data[key].latitude],
+            coordinates: [data[key].field2, data[key].field3],
           },
           type: 'Feature',
           properties: {
             description: `<div class="flex flex-col justify-center items-center pt-5">
               <img class="rounded-full object-cover avatar" src="https://cdn.dribbble.com/users/2407235/screenshots/6303151/abstract_design_2x.png" alt="username" />
               <div class="flex items-center pt-3 flex-no-wrap">
-                <p class=""> ${data[key].networkStatus ? 'Active' : 'Offline'} </p>
-                <div class="status ${data[key].networkStatus}">&bull;</div>
+                <p class=""> ${networkStatus} </p>
+                <div class="status ${networkStatus}">&bull;</div>
               </div>
               <div class="flex items-center pt-3 flex-no-wrap">
                 <p class="font-semibold text-xs"> Online since: ${dt} </p>
               </div>              
-              <p class="font-bold pt-2 text-xl">${data[key].ownerName}</p>
+              <p class="font-bold pt-2 text-xl">Owner</p>
               <p class="text-sm pt-1 text-center px-5"></p>
               <div>
-                <a class="rounded-full flex justify-center items-center tel-holder" href="tel:${
-                  data[key].ownerNumber
-                }"><i class="uil uil-calling text-2xl"></i></a>
+                <a class="rounded-full flex justify-center items-center tel-holder" href="tel:911"><i class="uil uil-calling text-2xl"></i></a>
               </div>
               </div>`,
-            icon: !data[key].networkStatus ? 'yellowpulsing-dot' :data[key].fireStatus ? 'redpulsing-dot' : 'pulsing-dot',
+            icon: fireStatus ? 'pulsing-dot' : 'redpulsing-dot',
           },
         };
         vm.sensorGeoJson.data.features.push(sensorData);

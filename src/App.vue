@@ -38,10 +38,10 @@ body {
   border-radius: 50%;
   display: flex;
 }
-.true {
+.online {
   @apply text-green-500;
 }
-.false {
+.offline {
   @apply text-red-500;
 }
 .marker {

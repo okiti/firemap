@@ -33,7 +33,7 @@ export default {
   },
   async mounted() {
     const vm = this;
-    axios.get('https://api.thingspeak.com/channels/1235655/feeds.json?api_key=LPDICWMZTR0WH5L7&results=7')
+    axios.get('https://api.thingspeak.com/channels/1235655/feeds.json?api_key=LPDICWMZTR0WH5L7&results=1')
     .then(async (response) => {
       const devices = response.data.feeds;
       console.log(devices);

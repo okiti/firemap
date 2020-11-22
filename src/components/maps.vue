@@ -36,10 +36,11 @@ export default {
     axios.get('https://api.thingspeak.com/channels/1235655/feeds.json?api_key=LPDICWMZTR0WH5L7&results=1')
     .then(async (response) => {
       const devices = response.data.feeds;
-      console.log(devices);
+      console.log(JSON.stringify(devices));
       vm.log = devices[0].field2;
       vm.lat = devices[0].field3;
       await this.generateGeoJson(devices);
+      console.log(vm.sensorGeoJson);
     })
 
     mapboxgl.accessToken = this.token;
@@ -69,6 +70,19 @@ export default {
         },
       });
     });
+  
+    setInterval(async () => {
+      let newData = null;
+      axios.get('https://api.thingspeak.com/channels/1235655/feeds.json?api_key=LPDICWMZTR0WH5L7&results=1')
+      .then(async (response) => {
+        const device = response.data.feeds;
+        vm.log = device[0].field2;
+        vm.lat = device[0].field3;
+        await this.generateGeoJson(device);
+        map.getSource('places').setData(vm.sensorGeoJson.data);
+      });
+    }, 90000);
+
     map.on('mouseenter', 'places', () => {
       map.getCanvas().style.cursor = 'pointer';
     });
@@ -100,7 +114,7 @@ export default {
         dayjs.extend(relativeTime)
         const dt = dayjs(data[key].created_at).fromNow();
         const networkStatus = data[key].field5 ? 'online' : 'offline';
-        const fireStatus = data[key].field4 ? 'fire' : 'nofire';
+        const fireStatus = data[key].field4 === "1" ? 'fire' : 'nofire';
         const sensorData = {
           geometry: {
             type: 'Point',
@@ -115,7 +129,7 @@ export default {
                 <div class="status ${networkStatus}">&bull;</div>
               </div>
               <div class="flex items-center pt-3 flex-no-wrap">
-                <p class="font-semibold text-xs"> Online since: ${dt} </p>
+                <p class="font-semibold text-xs"> Updated: ${dt} </p>
               </div>              
               <p class="font-bold pt-2 text-xl">Owner</p>
               <p class="text-sm pt-1 text-center px-5"></p>
@@ -123,10 +137,10 @@ export default {
                 <a class="rounded-full flex justify-center items-center tel-holder" href="tel:911"><i class="uil uil-calling text-2xl"></i></a>
               </div>
               </div>`,
-            icon: fireStatus ? 'pulsing-dot' : 'redpulsing-dot',
+            icon: fireStatus === 'nofire' ? 'pulsing-dot' : 'redpulsing-dot',
           },
         };
-        vm.sensorGeoJson.data.features.push(sensorData);
+        vm.sensorGeoJson.data.features = [sensorData];
       }
     },
   },
